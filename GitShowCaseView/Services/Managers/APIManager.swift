@@ -7,35 +7,10 @@
 
 import Foundation
 
-@Observable
 class APIManager {
     
-    var mainUser: UserDecoder?
-    var mainRepos: [Repositories]?
-    
-    init() {
-        Task{
-            do{
-                let userData = try await fetchUser()
-                self.mainUser = userData
-                
-                let repos = try await fetchRepo()
-                self.mainRepos = repos
-                
-            }catch GHError.invalidData{
-                print("ErrorData decode")
-            }catch GHError.invalidResponse{
-                print("response error")
-            }catch GHError.invalidURL{
-                print("invalid URL")
-            }catch{
-                print("unexpected Error")
-            }
-        }
-    }
-    
-    func fetchUser() async throws -> UserDecoder{
-        let endpoint = "https://api.github.com/users/Hiroio"
+    static func fetchUser(_ name: String) async throws -> UserDecoder{
+        let endpoint = "https://api.github.com/users/\(name)"
         
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
@@ -53,13 +28,13 @@ class APIManager {
             throw GHError.invalidData
         }
     }
-    func fetchRepo() async throws -> [Repositories]{
-        let endpoint = "https://api.github.com/users/Hiroio/repos"
+    
+    static func fetchRepo(_ name: String) async throws -> [Repositories]{
+        let endpoint = "https://api.github.com/users/\(name)/repos"
         
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
-        }
-        
+        }   
         let (data, response) = try await URLSession.shared.data(from: url)
         
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else{
@@ -72,6 +47,26 @@ class APIManager {
         } catch{
             throw GHError.invalidData
         }
+    
+    }
+    
+    static func fetchFollowers(name: String, page: Int = 1, perPage: Int = 31) async throws -> [Followers]{
+        let endpoint = "https://api.github.com/users/\(name)/followers?page=\(page)&per_page=\(perPage)"
+        print(endpoint)
         
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else{
+            throw GHError.invalidResponse
+        }
+        
+        do{
+            return try JSONDecoder().decode([Followers].self, from: data)
+        } catch{
+            throw GHError.invalidData
+        }
     }
 }

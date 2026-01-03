@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct GitShowCaseViewApp: App {
+    @State private var userVM = MainUserViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(userVM)
         }
     }
 }

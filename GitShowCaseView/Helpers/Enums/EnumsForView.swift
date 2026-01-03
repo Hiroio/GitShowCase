@@ -47,6 +47,29 @@ enum LanguageColor: String{
 }
 
 
+enum NavigationTab: String, CaseIterable, Identifiable{
+    case main, search
+    
+    var id: String{ self.rawValue}
+    
+    var icon: String{
+        switch self {
+        case .main:
+            return "person"
+        case .search:
+            return "magnifyingglass"
+        }
+    }
+}
+
+enum Route: Hashable{
+    case profile(user: String)
+}
+
+
+enum ScreenState: String{
+    case preload, loading, loaded, error, inCorrectUsername
+}
 enum GHError: Error {
     case invalidURL, invalidResponse, invalidData
 }

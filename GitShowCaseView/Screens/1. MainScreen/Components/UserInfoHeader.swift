@@ -9,6 +9,14 @@ import SwiftUI
 
 struct UserInfoHeader: View {
     let user: UserDecoder
+    var followers: [Followers]
+    @Binding  var isURL: Bool
+    @Binding  var url: URL?
+    
+    
+    let loadMoreFollower: () async -> Void
+    var moreUsers: Bool
+    @State private var followersExpanded: Bool = false
     var body: some View {
         VStack{
         HStack{
@@ -21,7 +29,7 @@ struct UserInfoHeader: View {
                 .font(.title.bold())
                 Text(user.name)
                     .font(.title3.bold())
-                Text(user.bio)
+                Text(user.bio ?? "no bio")
                     .lineLimit(nil)
                     .foregroundStyle(.secondary)
                 Divider()
@@ -29,7 +37,10 @@ struct UserInfoHeader: View {
                     Text(user.html_url)
                         .font(.caption)
                         .foregroundStyle(.tint)
-                    Text(EmojiLocation(rawValue: user.location.lowercased())?.emoji ?? "🏴‍☠️")
+                    Text(EmojiLocation(rawValue: user.location?.lowercased() ?? "")?.emoji ?? "🏴‍☠️")
+                }.onTapGesture {
+                    url = URL(string: user.html_url)!
+                    isURL = true
                 }
                 
                 
@@ -55,6 +66,20 @@ struct UserInfoHeader: View {
             .clipShape(Circle())
             
         }
+            VStack{
+                HStack{
+                    Text("\(user.followers) followers:")
+                    Spacer()
+                    Image(systemName: "chevron.down")
+                        .rotationEffect(Angle(degrees: followersExpanded ? 180 : 0))
+                }
+                .onTapGesture {
+                    withAnimation{
+                        followersExpanded.toggle()
+                    }
+                }
+                FollowersScrollView(moreUsers: moreUsers, loadFollowers: loadMoreFollower, followers: followers, isExpanded: followersExpanded)
+            }
             Text("⚪️ joined on: \(user.createdAt.formatted(.dateTime.day().month(.wide).year()))")
                 .font(.caption)
                 .foregroundStyle(.gray)
@@ -72,5 +97,5 @@ struct UserInfoHeader: View {
 }
 
 #Preview {
-    UserInfoHeader(user: UserDecoder.shared)
+    UserInfoHeader(user: UserDecoder.shared,followers: [], isURL: .constant(true), url: .constant(URL(string: "")), loadMoreFollower: {}, moreUsers: false)
 }
