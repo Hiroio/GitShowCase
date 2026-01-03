@@ -11,8 +11,7 @@ struct SearchView: View {
     @State private var searchVM: SearchViewModel = .init()
     @State private var searchText: String = ""
     @State private var searchState: Bool = true
-    @Binding  var isURL: Bool
-    @Binding  var url: URL?
+    @Binding  var url: URLSheet?
     var body: some View {
         VStack{
             HStack{
@@ -40,7 +39,7 @@ struct SearchView: View {
             }
             
             if let user = searchVM.searchUser{
-                UserDetail(user: user, repos: searchVM.searchUserRepos, followers: searchVM.followers, loadMoreFollowers: searchVM.followersPagination, moreUsers: searchVM.hasMoreUsers ,isURL: $isURL, url: $url)
+                UserDetail(user: user, repos: searchVM.searchUserRepos, followers: searchVM.followers, loadMoreFollowers: searchVM.followersPagination, moreUsers: searchVM.hasMoreUsers, url: $url)
             }else{
                 Spacer()
                 switch searchVM.screenState{
@@ -68,6 +67,6 @@ struct SearchView: View {
 }
 
 #Preview {
-    SearchView(isURL: .constant(false), url: .constant(URL(string: "github")!))
+    SearchView(url: .constant(URLSheet(url: URL(string: "")!)))
         .environment(MainUserViewModel())
 }

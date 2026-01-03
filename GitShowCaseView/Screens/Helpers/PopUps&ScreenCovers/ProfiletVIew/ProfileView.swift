@@ -10,13 +10,12 @@ import SwiftUI
 struct ProfileView: View {
     @State private var profileVM = SearchViewModel()
     let username: String
-    @Binding var isURL: Bool
-    @Binding var url: URL?
+    @Binding var url: URLSheet?
     var body: some View {
         VStack{
             if let user = profileVM.searchUser{
                 VStack(spacing: 0){
-                    UserDetail(user: user, repos: profileVM.searchUserRepos, followers: profileVM.followers, loadMoreFollowers: profileVM.followersPagination, moreUsers: profileVM.hasMoreUsers, isURL: $isURL, url: $url)
+                    UserDetail(user: user, repos: profileVM.searchUserRepos, followers: profileVM.followers, loadMoreFollowers: profileVM.followersPagination, moreUsers: profileVM.hasMoreUsers, url: $url)
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
@@ -33,5 +32,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(username: "Hiroio", isURL: .constant(false), url: .constant(URL(string: "")))
+    ProfileView(username: "Hiroio", url: .constant(URLSheet(url: URL(string: "")!)))
 }

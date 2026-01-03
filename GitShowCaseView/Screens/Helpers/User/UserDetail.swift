@@ -14,12 +14,11 @@ struct UserDetail: View {
     let loadMoreFollowers: () async -> Void
     var moreUsers: Bool
     
-    @Binding var isURL: Bool
-    @Binding var url: URL?
+    @Binding var url: URLSheet?
     var body: some View {
         
             VStack{
-                UserInfoHeader(user: user, followers: followers, isURL: $isURL, url: $url, loadMoreFollower: loadMoreFollowers, moreUsers: moreUsers)
+                UserInfoHeader(user: user, followers: followers, url: $url, loadMoreFollower: loadMoreFollowers, moreUsers: moreUsers)
                 
                 if let repos = repos{
                     MainUserRepos(repos: repos, total: user.public_repos)
@@ -42,5 +41,5 @@ struct UserDetail: View {
 }
 
 #Preview {
-    UserDetail(user: UserDecoder.shared, repos: nil, followers: [], loadMoreFollowers: {}, moreUsers: false, isURL: .constant(false), url: .constant(URL(string: "")))
+    UserDetail(user: UserDecoder.shared, repos: nil, followers: [], loadMoreFollowers: {}, moreUsers: false, url: .constant(URLSheet(url: URL(string: "")!)))
 }

@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var navigationState: NavigationTab = .main
-    @State private var url: URL?
-    @State private var isURL: Bool = false
+    @State private var url: URLSheet?
     @State private var router = NavigationRouter()
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -18,9 +17,9 @@ struct ContentView: View {
             VStack(spacing: 0){
                 switch navigationState {
                 case .main:
-                    MainView(url: $url, isURL: $isURL)
+                    MainView(url: $url)
                 case .search:
-                    SearchView(isURL: $isURL, url: $url)
+                    SearchView(url: $url)
                 }
                 
                 
@@ -29,12 +28,12 @@ struct ContentView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .profile(let username):
-                    ProfileView(username: username, isURL: $isURL, url: $url)
+                    ProfileView(username: username, url: $url)
                 }
             }
         }
-        .sheet(isPresented: $isURL){
-            WebScreen(url: url ?? URL(string: "git.hub")!)
+        .sheet(item: $url){url in
+            WebScreen(url: url.url)
         }
         .environment(router)
     }

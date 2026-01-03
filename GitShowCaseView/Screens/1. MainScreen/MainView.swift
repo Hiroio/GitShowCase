@@ -9,13 +9,13 @@ import SwiftUI
 
 struct MainView: View {
     @Environment(MainUserViewModel.self) var userVM
-    @Binding var url: URL?
-    @Binding var isURL: Bool
+    @Binding var url: URLSheet?
+
     
     var body: some View {
         VStack{
             if let user = userVM.mainUser{
-                UserDetail(user: user, repos: userVM.mainRepos, followers: userVM.followers, loadMoreFollowers: userVM.followersPagination, moreUsers: userVM.hasMoreUsers ,isURL: $isURL, url: $url)
+                UserDetail(user: user, repos: userVM.mainRepos, followers: userVM.followers, loadMoreFollowers: userVM.followersPagination, moreUsers: userVM.hasMoreUsers, url: $url)
             }else{
                 Spacer()
                 switch userVM.screenState{
@@ -55,6 +55,6 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView(url: .constant(URL(string: "")), isURL: .constant(false))
+    MainView(url: .constant(URLSheet(url: URL(string: "")!)))
         .environment(MainUserViewModel())
 }

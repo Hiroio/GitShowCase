@@ -10,8 +10,7 @@ import SwiftUI
 struct UserInfoHeader: View {
     let user: UserDecoder
     var followers: [Followers]
-    @Binding  var isURL: Bool
-    @Binding  var url: URL?
+    @Binding  var url: URLSheet?
     
     
     let loadMoreFollower: () async -> Void
@@ -33,14 +32,16 @@ struct UserInfoHeader: View {
                     .lineLimit(nil)
                     .foregroundStyle(.secondary)
                 Divider()
-                HStack{
-                    Text(user.html_url)
-                        .font(.caption)
-                        .foregroundStyle(.tint)
-                    Text(EmojiLocation(rawValue: user.location?.lowercased() ?? "")?.emoji ?? "🏴‍☠️")
-                }.onTapGesture {
-                    url = URL(string: user.html_url)!
-                    isURL = true
+                Button{
+                    self.url = URLSheet(url: URL(string: user.html_url)!)
+                }label:{
+                    HStack{
+                        
+                        Text(user.html_url)
+                            .font(.caption)
+                            .foregroundStyle(.tint)
+                        Text(EmojiLocation(rawValue: user.location?.lowercased() ?? "")?.emoji ?? "🏴‍☠️")
+                    }
                 }
                 
                 
@@ -97,5 +98,5 @@ struct UserInfoHeader: View {
 }
 
 #Preview {
-    UserInfoHeader(user: UserDecoder.shared,followers: [], isURL: .constant(true), url: .constant(URL(string: "")), loadMoreFollower: {}, moreUsers: false)
+    UserInfoHeader(user: UserDecoder.shared,followers: [], url: .constant(URLSheet(url: URL(string: "")!)), loadMoreFollower: {}, moreUsers: false)
 }
